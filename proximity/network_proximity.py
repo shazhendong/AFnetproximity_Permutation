@@ -28,7 +28,7 @@ class DrugTarget(object):
 
 
 class Interactome(object):
-    def __init__(self, pathG="HumanInteractome.tsv", pathSD="HumanInteractome.npy", binSize=300):
+    def __init__(self, pathG="proximity/HumanInteractome.tsv", pathSD="proximity/HumanInteractome.npy", binSize=300):
         self.G = nx.read_edgelist(pathG, delimiter="\t", data=[("src", str), ("typ", str)])
         self.G.remove_edges_from(nx.selfloop_edges(self.G))
         self.SD = np.load(pathSD, allow_pickle=True)
@@ -106,11 +106,11 @@ class Interactome(object):
                     break
         return result
 
-    def ProximityZ(self, mod1, mod2, repeat):
+    def ProximityZ(self, mod1, mod2, repeat): 
         d = self.Proximity(mod1, mod2)
         b = self.ProximityRandom(mod1, mod2, repeat=repeat)
         z, p = Z_Score(d, b)
-        return d, z, p
+        return d, z, p, b
 
 
 def Z_Score(real, background):
@@ -140,5 +140,18 @@ if __name__ == "__main__":
         interactome = Interactome()
         genes1 = interactome.Name2Index(genes1)
         genes2 = interactome.Name2Index(genes2)
-        d, z, p = interactome.ProximityZ(genes1, genes2, repeat=repeat)
+        d, z, p, b = interactome.ProximityZ(genes1, genes2, repeat=repeat)
         print("D: %.3f  Z: %s%.3f  P: %.3f" % (d, "" if z < 0 else " ", z, p))
+        
+        # generate ggplot2 ready csv result for visualization. This csv has three columns: Value,Type {'Real', 'Background'},Permutation_ID
+        # initialize an empty df
+        import pandas as pd
+        df = pd.DataFrame(columns=['Value', 'Type'])
+        # add a row for the real value, do not use append
+        df.loc[0] = [d, 'Real']
+        # add rows for the background values
+        for i in range(len(b)):
+            df.loc[i+1] = [b[i], 'Background']
+        # save the df as a csv
+        output = input1.split('.')[0] + '-' + input2.split('.')[0] + '.csv'
+        df.to_csv(output, index=False)

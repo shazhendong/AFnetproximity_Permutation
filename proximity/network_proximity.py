@@ -153,5 +153,9 @@ if __name__ == "__main__":
         for i in range(len(b)):
             df.loc[i+1] = [b[i], 'Background']
         # save the df as a csv
-        output = input1.split('.')[0] + '-' + input2.split('.')[0] + '.csv'
+        output = 'Perm_' + input1.split('.')[0] + '-Closest-' + input2.split('.')[0] + '.csv'
         df.to_csv(output, index=False)
+
+        # write # "D: %.3f  Z: %s%.3f  P: %.3f" % (d, "" if z < 0 else " ", z, p) to output file as the first line
+        with open(output, 'r') as original: data = original.read()
+        with open(output, 'w') as modified: modified.write("# D: %.3f  Z: %s%.3f  P: %.3f\n" % (d, "" if z < 0 else " ", z, p) + data)

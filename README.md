@@ -15,7 +15,13 @@ pip install numpy networkx
 
 #### To compute the closest proximity between two gene lists
 ```
+# Equation 13
 python network_proximity.py path_to_gene_list_1 path_to_gene_list_2 number_of_repeat random_seed
+```
+
+```
+# Equation 1
+python network_proximity_distance.py path_to_gene_list_1 path_to_gene_list_2 number_of_repeat random_seed 
 ```
 
 #### To screen all the drugs for a gene list

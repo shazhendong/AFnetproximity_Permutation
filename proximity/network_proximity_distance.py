@@ -25,7 +25,7 @@ if __name__ == "__main__":
         interactome = Interactome()
         genes1 = interactome.Name2Index(genes1)
         genes2 = interactome.Name2Index(genes2)
-        d, z, p, b = interactome.ProximityZ(genes1, genes2, repeat=repeat)
+        d, z, p, b = interactome.ProximityZ(genes1, genes2, repeat=repeat, method="distance")
         print("D: %.3f  Z: %s%.3f  P: %.3f" % (d, "" if z < 0 else " ", z, p))
         
         # generate ggplot2 ready csv result for visualization. This csv has three columns: Value,Type {'Real', 'Background'},Permutation_ID
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         for i in range(len(b)):
             df.loc[i+1] = [b[i], 'Background']
         # save the df as a csv
-        output = 'Perm_' + input1.split('.')[0] + '-Closest-' + input2.split('.')[0] + '.csv'
+        output = 'Perm_' + input1.split('.')[0] + '-Distance-' + input2.split('.')[0] + '.csv'
         df.to_csv(output, index=False)
 
         # write # "D: %.3f  Z: %s%.3f  P: %.3f" % (d, "" if z < 0 else " ", z, p) to output file as the first line

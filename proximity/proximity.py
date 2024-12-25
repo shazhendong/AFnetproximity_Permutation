@@ -89,12 +89,19 @@ class Interactome(object):
         closest1 = SD.min(0)
         closest2 = SD.min(1)
         return (closest1.sum() + closest2.sum()) / (closest1.count() + closest2.count())
+    
+    def Distance(self, modFrom, modTo): # function 1 in Feixiong Cheng et al. 2019
+        # ZS: modified the code from Yadi Zhou. Function parameters from SD, mod1, mod2 to self, mod1, mod2
+        return self.SD[np.ix_(modFrom, modTo)].min(1).mean()
 
-    def ProximityRandom(self, mod1, mod2, repeat):
+    def ProximityRandom(self, mod1, mod2, repeat, method="closest"):
         result = np.zeros(repeat)
         index = 0
         for mod1r, mod2r in zip(self.DegreePreserveSampling(mod1), self.DegreePreserveSampling(mod2)):
-            v = self.Proximity(mod1r, mod2r)
+            if method == 'closest':
+                v = self.Proximity(mod1r, mod2r)
+            elif method == 'distance':
+                v = self.Distance(mod1r, mod2r)
             if not ma.is_masked(v):
                 result[index] = v
                 index += 1
@@ -102,10 +109,17 @@ class Interactome(object):
                     break
         return result
 
-    def ProximityZ(self, mod1, mod2, repeat): 
-        d = self.Proximity(mod1, mod2)
-        b = self.ProximityRandom(mod1, mod2, repeat=repeat)
-        z, p = Z_Score(d, b)
+    def ProximityZ(self, mod1, mod2, repeat, method="closest"): 
+        if method == 'closest':
+            print("Calculating proximity using closest method")
+            d = self.Proximity(mod1, mod2)
+            b = self.ProximityRandom(mod1, mod2, repeat=repeat)
+            z, p = Z_Score(d, b)
+        elif method == 'distance':
+            print("Calculating proximity using distance method")
+            d = self.Distance(mod1, mod2)
+            b = self.ProximityRandom(mod1, mod2, repeat=repeat, method="distance")
+            z, p = Z_Score(d, b)
         return d, z, p, b
 
 

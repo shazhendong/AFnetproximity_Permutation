@@ -90,9 +90,9 @@ class Interactome(object):
         closest2 = SD.min(1)
         return (closest1.sum() + closest2.sum()) / (closest1.count() + closest2.count())
     
-    def Distance(self, modFrom, modTo): # function 1 in Feixiong Cheng et al. 2019
+    def Distance(self, modDrug, modDisease): # function 1 in Feixiong Cheng et al. 2019
         # ZS: modified the code from Yadi Zhou. Function parameters from SD, mod1, mod2 to self, mod1, mod2
-        return self.SD[np.ix_(modFrom, modTo)].min(1).mean()
+        return self.SD[np.ix_(modDrug, modDisease)].min(0).mean()
 
     def ProximityRandom(self, mod1, mod2, repeat, method="closest"):
         result = np.zeros(repeat)

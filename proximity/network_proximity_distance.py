@@ -22,7 +22,7 @@ if __name__ == "__main__":
             genes1 = fi.read().splitlines()
         with open(input2) as fi:
             genes2 = fi.read().splitlines()
-        interactome = Interactome()
+        interactome = Interactome(binSize=200)
         genes1 = interactome.Name2Index(genes1)
         genes2 = interactome.Name2Index(genes2)
         d, z, p, b = interactome.ProximityZ(genes1, genes2, repeat=repeat, method="distance")
